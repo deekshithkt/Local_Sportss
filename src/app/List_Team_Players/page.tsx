@@ -1,5 +1,7 @@
-import React, { Suspense } from 'react';
-import ListTeamPlayers from './ListTeamPlayers';
+import React, { Suspense, lazy } from 'react';
+
+const ListTeamPlayers = lazy(() => import('./ListTeamPlayers'));
+
 const CreateTeam = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
