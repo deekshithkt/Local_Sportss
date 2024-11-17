@@ -1,4 +1,5 @@
 'use client';
+
 import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
@@ -18,7 +19,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-const ListTeamPlayersContent = () => {
+const ListTeamPlayers = () => {
   const searchParams = useSearchParams();
   const [teamName, setTeamName] = useState(null);
   const [players, setPlayers] = useState([]);
@@ -81,6 +82,7 @@ const ListTeamPlayersContent = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-4 sm:p-6 lg:p-8">
+      <Navbar />
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8 space-y-4">
@@ -153,17 +155,10 @@ const ListTeamPlayersContent = () => {
   );
 };
 
-const ListTeamPlayers = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <ListTeamPlayersContent />
-  </Suspense>
-);
-
 export default function Page() {
   return (
-    <>
-      <Navbar />
+    <Suspense fallback={<div>Loading...</div>}>
       <ListTeamPlayers />
-    </>
+    </Suspense>
   );
 }
