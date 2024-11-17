@@ -1,4 +1,4 @@
-'use client';
+'use client'; // This ensures the component is only rendered client-side
 import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
@@ -19,17 +19,25 @@ const SkeletonCard = () => (
 );
 
 const ListTeamPlayers = () => {
-  const searchParams = useSearchParams();
-  const [teamName, setTeamName] = useState(null);
-  const [players, setPlayers] = useState([]);
+  const [teamName, setTeamName] = useState<string | null>(null);
+  const [players, setPlayers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false); // Track mounting status
 
   useEffect(() => {
-    const team = searchParams.get('team');
-    if (team) {
-      setTeamName(team);
+    setMounted(true); // Set to true after component mounts
+  }, []);
+
+  // UseSearchParams inside useEffect to only trigger on client-side
+  useEffect(() => {
+    if (mounted) {
+      const searchParams = useSearchParams();
+      const team = searchParams.get('team');
+      if (team) {
+        setTeamName(team);
+      }
     }
-  }, [searchParams]);
+  }, [mounted]); // Depend on mounted state to run on client-side
 
   useEffect(() => {
     if (teamName) {
@@ -78,6 +86,8 @@ const ListTeamPlayers = () => {
       fetchPlayers();
     }
   }, [teamName]);
+
+  if (!mounted) return null; // Render nothing until mounted
 
   return (
     <>
@@ -156,7 +166,6 @@ const ListTeamPlayers = () => {
   );
 };
 
-// Wrap the entire Page component in Suspense
 export default function Page() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
