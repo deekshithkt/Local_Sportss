@@ -151,10 +151,14 @@ const ListTeamPlayers = () => {
   );
 };
 
-export default function Page() {
+const CreateTeam = () => {
+  // ... other component logic
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <ListTeamPlayers />
     </Suspense>
   );
-}
+};
+
+export default CreateTeam;
