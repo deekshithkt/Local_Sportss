@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import Image from 'next/image';
@@ -156,7 +156,11 @@ const ListTeamPlayers = () => {
   );
 };
 
-// No need for Suspense here, as the component's loading state is already managed
+// Wrap the entire Page component in Suspense
 export default function Page() {
-  return <ListTeamPlayers />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ListTeamPlayers />
+    </Suspense>
+  );
 }
