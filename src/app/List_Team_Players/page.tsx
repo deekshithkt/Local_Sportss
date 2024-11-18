@@ -80,6 +80,8 @@ const ListTeamPlayers = () => {
   }, [teamName]);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
+
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-4 sm:p-6 lg:p-8">
@@ -153,13 +155,8 @@ const ListTeamPlayers = () => {
         </div>
       </div>
     </>
+    </Suspense>
   );
 };
 
-export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ListTeamPlayers />
-    </Suspense>
-  );
-}
+export default ListTeamPlayers;
