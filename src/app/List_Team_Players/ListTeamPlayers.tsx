@@ -1,6 +1,7 @@
 'use client';
-import React, { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabaseClient';
 import Image from 'next/image';
 import { Trophy, Users } from 'lucide-react';
@@ -19,17 +20,17 @@ const SkeletonCard = () => (
 );
 
 const ListTeamPlayers = () => {
-  const searchParams = useSearchParams();
-  const [teamName, setTeamName] = useState(null);
+  const router = useRouter();
+  const [teamName, setTeamName] = useState<string | null>(null);
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const team = searchParams.get('team');
-    if (team) {
-      setTeamName(team);
-    }
-  }, [searchParams]);
+    // Get the team name from query parameters
+    const queryParams = new URLSearchParams(window.location.search);
+    const team = queryParams.get('team');
+    setTeamName(team);
+  }, []);
 
   useEffect(() => {
     if (teamName) {
@@ -46,7 +47,6 @@ const ListTeamPlayers = () => {
             return;
           }
 
-          // Fetch player images in parallel for better performance
           const playerPromises = playersData.map(async (player) => {
             const { data: userData, error: userError } = await supabase
               .from('users')
@@ -56,7 +56,7 @@ const ListTeamPlayers = () => {
 
             if (userError) {
               console.error('Error fetching user image:', userError);
-              return { ...player, image_url: null }; // Set image_url to null if error
+              return { ...player, image_url: null };
             }
 
             return { ...player, image_url: userData?.image_url };
@@ -67,8 +67,7 @@ const ListTeamPlayers = () => {
         } catch (error) {
           console.error('Error fetching players:', error);
         } finally {
-          // Add artificial delay for smooth transition
-          setTimeout(() => setLoading(false), 800);
+          setTimeout(() => setLoading(false), 800); // Artificial delay
         }
       };
 
@@ -98,10 +97,7 @@ const ListTeamPlayers = () => {
           {/* Players Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {loading ? (
-              // Skeleton loading state
-              [...Array(6)].map((_, index) => (
-                <SkeletonCard key={`skeleton-${index}`} />
-              ))
+              [...Array(6)].map((_, index) => <SkeletonCard key={index} />)
             ) : players.length === 0 ? (
               <div className="col-span-full">
                 <div className="bg-gray-800/50 rounded-xl p-8 text-center">
@@ -150,4 +146,5 @@ const ListTeamPlayers = () => {
     </>
   );
 };
+
 export default ListTeamPlayers;
